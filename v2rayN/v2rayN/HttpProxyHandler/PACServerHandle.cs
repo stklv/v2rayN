@@ -5,6 +5,7 @@ using System.Text;
 using v2rayN.Mode;
 using v2rayN.Properties;
 using v2rayN.Tool;
+using v2rayN.Base;
 
 namespace v2rayN.HttpProxyHandler
 {
@@ -31,11 +32,11 @@ namespace v2rayN.HttpProxyHandler
             //{
             //    pacPort = Global.pacPort;
             //}
-            if (InitServer("127.0.0.1"))
+            if (InitServer(Global.Loopback))
             {
                 pacPort = Global.pacPort;
             }
-            else if (InitServerB("127.0.0.1"))
+            else if (InitServerB(Global.Loopback))
             {
                 pacPort = Global.pacPort;
             }
@@ -66,7 +67,6 @@ namespace v2rayN.HttpProxyHandler
                         server = new HttpWebServer(SendResponse, prefixes);
                         server.Run();
 
-                        //pacPort = Global.pacPort;
                     }
                 }
                 Utils.SaveLog("Webserver at " + address);
@@ -94,7 +94,6 @@ namespace v2rayN.HttpProxyHandler
                     if (serverB == null)
                     {
                         serverB = new HttpWebServerB(Global.pacPort, SendResponse);
-                        //pacPort = Global.pacPort;
                     }
                 }
                 Utils.SaveLog("WebserverB at " + address);
@@ -158,7 +157,7 @@ namespace v2rayN.HttpProxyHandler
 
         private static string GetPacList(string address)
         {
-            var port = Global.sysAgentPort;
+            var port = Global.httpPort;
             if (port <= 0)
             {
                 return "No port";

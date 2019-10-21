@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using v2rayN.Mode;
-using System.Net;
-using System.Text;
 using System.Linq;
+using System.Net;
+using v2rayN.Base;
+using v2rayN.Mode;
 
 namespace v2rayN.Handler
 {
@@ -159,7 +159,7 @@ namespace v2rayN.Handler
                 }
                 else
                 {
-                    inbound.listen = "127.0.0.1";
+                    inbound.listen = Global.Loopback;
                 }
                 //开启udp
                 inbound.settings.udp = config.inbound[0].udpEnabled;
@@ -1361,6 +1361,91 @@ namespace v2rayN.Handler
             vmessItem.alterId = 0;
 
             return vmessItem;
+        }
+
+        #endregion
+
+        #region Gen speedtest config
+
+
+        public static int GenerateClientSpeedtestConfig(Config config, List<int> selecteds, string fileName, out string msg)
+        {
+            msg = string.Empty;
+
+            try
+            {
+                if (config == null
+                    || config.index < 0
+                    || config.vmess.Count <= 0
+                    || config.index > config.vmess.Count - 1
+                    )
+                {
+                    msg = UIRes.I18N("CheckServerSettings");
+                    return -1;
+                }
+
+                msg = UIRes.I18N("InitialConfiguration");
+
+                string result = Utils.GetEmbedText(SampleClient);
+                if (Utils.IsNullOrEmpty(result))
+                {
+                    msg = UIRes.I18N("FailedGetDefaultConfiguration");
+                    return -1;
+                }
+
+                V2rayConfig v2rayConfig = Utils.FromJson<V2rayConfig>(result);
+                if (v2rayConfig == null)
+                {
+                    msg = UIRes.I18N("FailedGenDefaultConfiguration");
+                    return -1;
+                }
+
+                log(config, ref v2rayConfig, false);
+                //routing(config, ref v2rayConfig);
+                dns(config, ref v2rayConfig);
+
+
+                var httpPort = config.GetLocalPort("speedtest");
+                for (int k = 0; k < selecteds.Count; k++)
+                {
+                    int index = selecteds[k];
+                    if (config.vmess[index].configType == (int)EConfigType.Custom)
+                    {
+                        continue;
+                    }
+
+                    config.index = index;
+
+                    var inbound = new Inbounds();
+                    inbound.listen = Global.Loopback;
+                    inbound.port = httpPort + index;
+                    inbound.protocol = Global.InboundHttp;
+                    inbound.tag = Global.InboundHttp + inbound.port.ToString();
+                    v2rayConfig.inbounds.Add(inbound);
+
+
+                    var v2rayConfigCopy = Utils.FromJson<V2rayConfig>(result);
+                    outbound(config, ref v2rayConfigCopy);
+                    v2rayConfigCopy.outbounds[0].tag = Global.agentTag + inbound.port.ToString();
+                    v2rayConfig.outbounds.Add(v2rayConfigCopy.outbounds[0]);
+
+                    var rule = new Mode.RulesItem();
+                    rule.inboundTag = inbound.tag;
+                    rule.outboundTag = v2rayConfigCopy.outbounds[0].tag;
+                    rule.type = "field";
+                    v2rayConfig.routing.rules.Add(rule);
+                }
+
+                Utils.ToJsonFile(v2rayConfig, fileName);
+
+                msg = string.Format(UIRes.I18N("SuccessfulConfiguration"), config.getSummary());
+            }
+            catch (Exception ex)
+            {
+                msg = UIRes.I18N("FailedGenDefaultConfiguration");
+                return -1;
+            }
+            return 0;
         }
 
         #endregion

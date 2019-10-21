@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using v2rayN.Handler;
 using v2rayN.HttpProxyHandler;
 using v2rayN.Mode;
+using v2rayN.Base;
 
 namespace v2rayN.Forms
 {
@@ -15,7 +16,7 @@ namespace v2rayN.Forms
     {
         private V2rayHandler v2rayHandler;
         private PACListHandle pacListHandle;
-        private V2rayUpdateHandle v2rayUpdateHandle;
+        private DownloadHandle downloadHandle;
         private List<int> lvSelecteds = new List<int>();
         private StatisticsHandler statistics = null;
 
@@ -319,16 +320,15 @@ namespace v2rayN.Forms
 
         private void DisplayToolStatus()
         {
-            var localIP = "127.0.0.1";
             toolSslSocksPort.Text =
             toolSslHttpPort.Text =
             toolSslPacPort.Text = "NONE";
 
-            toolSslSocksPort.Text = $"{localIP}:{config.inbound[0].localPort}";
+            toolSslSocksPort.Text = $"{Global.Loopback}:{config.inbound[0].localPort}";
 
             if (config.sysAgentEnabled)
             {
-                toolSslHttpPort.Text = $"{localIP}:{Global.sysAgentPort}";
+                toolSslHttpPort.Text = $"{Global.Loopback}:{Global.httpPort}";
                 if (config.listenerType == 2 || config.listenerType == 4)
                 {
                     if (PACServerHandle.IsRunning)
@@ -363,7 +363,7 @@ namespace v2rayN.Forms
                     color = (new Color[] { Color.Red, Color.Purple, Color.DarkGreen, Color.Orange })[index - 1];
                     //color = ColorTranslator.FromHtml(new string[] { "#CC0066", "#CC6600", "#99CC99", "#666699" }[index - 1]);
                 }
-                
+
                 var width = 128;
                 var height = 128;
 
@@ -607,7 +607,7 @@ namespace v2rayN.Forms
 
         private void menuRealPingServer_Click(object sender, EventArgs e)
         {
-            if (!config.sysAgentEnabled || config.listenerType != 1)
+            if (!config.sysAgentEnabled)
             {
                 UI.Show(UIRes.I18N("NeedHttpGlobalProxy"));
                 return;
@@ -622,7 +622,7 @@ namespace v2rayN.Forms
 
         private void menuSpeedServer_Click(object sender, EventArgs e)
         {
-            if (!config.sysAgentEnabled || config.listenerType != 1)
+            if (!config.sysAgentEnabled)
             {
                 UI.Show(UIRes.I18N("NeedHttpGlobalProxy"));
                 return;
@@ -1045,7 +1045,7 @@ namespace v2rayN.Forms
         #endregion
 
         #region 后台测速
-        
+
         private void SetTestResult(int k, string txt)
         {
             config.vmess[k].testResult = txt;
@@ -1252,7 +1252,7 @@ namespace v2rayN.Forms
         {
             if (isChecked)
             {
-                if (HttpProxyHandle.RestartHttpAgent(config, true))
+                if (HttpProxyHandle.RestartHttpAgent(config, false))
                 {
                     ChangePACButtonStatus(config.listenerType);
                 }
@@ -1280,10 +1280,10 @@ namespace v2rayN.Forms
 
         private void tsbCheckUpdateCore_Click(object sender, EventArgs e)
         {
-            if (v2rayUpdateHandle == null)
+            if (downloadHandle == null)
             {
-                v2rayUpdateHandle = new V2rayUpdateHandle();
-                v2rayUpdateHandle.AbsoluteCompleted += (sender2, args) =>
+                downloadHandle = new DownloadHandle();
+                downloadHandle.AbsoluteCompleted += (sender2, args) =>
                 {
                     if (args.Success)
                     {
@@ -1299,7 +1299,7 @@ namespace v2rayN.Forms
                             }
                             else
                             {
-                                v2rayUpdateHandle.DownloadFileAsync(config, url);
+                                downloadHandle.DownloadFileAsync(config, url, null);
                             }
                         }));
                     }
@@ -1308,7 +1308,7 @@ namespace v2rayN.Forms
                         AppendText(false, args.Msg);
                     }
                 };
-                v2rayUpdateHandle.UpdateCompleted += (sender2, args) =>
+                downloadHandle.UpdateCompleted += (sender2, args) =>
                 {
                     if (args.Success)
                     {
@@ -1319,7 +1319,7 @@ namespace v2rayN.Forms
                         {
                             CloseV2ray();
 
-                            string fileName = v2rayUpdateHandle.DownloadFileName;
+                            string fileName = downloadHandle.DownloadFileName;
                             fileName = Utils.GetPath(fileName);
                             using (ZipArchive archive = ZipFile.OpenRead(fileName))
                             {
@@ -1347,14 +1347,14 @@ namespace v2rayN.Forms
                         AppendText(false, args.Msg);
                     }
                 };
-                v2rayUpdateHandle.Error += (sender2, args) =>
+                downloadHandle.Error += (sender2, args) =>
                 {
                     AppendText(true, args.GetException().Message);
                 };
             }
 
             AppendText(false, UIRes.I18N("MsgStartUpdatingV2rayCore"));
-            v2rayUpdateHandle.AbsoluteV2rayCore(config);
+            downloadHandle.AbsoluteV2rayCore(config);
         }
 
         private void tsbCheckUpdatePACList_Click(object sender, EventArgs e)
@@ -1474,8 +1474,8 @@ namespace v2rayN.Forms
                     continue;
                 }
 
-                V2rayUpdateHandle v2rayUpdateHandle3 = new V2rayUpdateHandle();
-                v2rayUpdateHandle3.UpdateCompleted += (sender2, args) =>
+                DownloadHandle downloadHandle3 = new DownloadHandle();
+                downloadHandle3.UpdateCompleted += (sender2, args) =>
                 {
                     if (args.Success)
                     {
@@ -1504,12 +1504,12 @@ namespace v2rayN.Forms
                         AppendText(false, args.Msg);
                     }
                 };
-                v2rayUpdateHandle3.Error += (sender2, args) =>
+                downloadHandle3.Error += (sender2, args) =>
                 {
                     AppendText(true, args.GetException().Message);
                 };
 
-                v2rayUpdateHandle3.WebDownloadString(url);
+                downloadHandle3.WebDownloadString(url);
                 AppendText(false, $"{hashCode}{UIRes.I18N("MsgStartGettingSubscriptions")}");
             }
 
@@ -1537,6 +1537,6 @@ namespace v2rayN.Forms
 
         #endregion
 
-       
+
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using v2rayN.Mode;
+using v2rayN.Base;
 
 namespace v2rayN.Handler
 {
@@ -56,7 +57,7 @@ namespace v2rayN.Handler
             {
                 config.inbound = new List<InItem>();
                 InItem inItem = new InItem();
-                inItem.protocol = "socks";
+                inItem.protocol = Global.InboundSocks;
                 inItem.localPort = 10808;
                 inItem.udpEnabled = true;
                 inItem.sniffingEnabled = true;
@@ -75,7 +76,7 @@ namespace v2rayN.Handler
                 //http协议不由core提供,只保留socks
                 if (config.inbound.Count > 0)
                 {
-                    config.inbound[0].protocol = "socks";
+                    config.inbound[0].protocol = Global.InboundSocks;
                 }
             }
             //路由规则

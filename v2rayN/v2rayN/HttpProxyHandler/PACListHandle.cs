@@ -4,6 +4,7 @@ using System.IO;
 using System.Net;
 using System.Text;
 using Newtonsoft.Json;
+using v2rayN.Base;
 using v2rayN.Mode;
 using v2rayN.Properties;
 
@@ -46,7 +47,7 @@ namespace v2rayN.HttpProxyHandler
             //{
             //    throw new Exception("未发现HTTP代理，无法设置代理更新");
             //}
-            WebClient http = new WebClient();
+            var http = new WebClientEx();
             //http.Headers.Add("Connection", "Close");
             //http.Proxy = new WebProxy(IPAddress.Loopback.ToString(), httpProxy.localPort);
             http.DownloadStringCompleted += http_DownloadStringCompleted;
