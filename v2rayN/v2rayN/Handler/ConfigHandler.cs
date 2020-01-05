@@ -41,10 +41,7 @@ namespace v2rayN.Handler
 
                 ////默认监听端口
                 //config.pacPort = 8888;
-
-                // 默认缓存七天
-                config.CacheDays = 7;
-
+                 
                 // 默认不开启统计
                 config.enableStatistics = false;
 
@@ -125,10 +122,18 @@ namespace v2rayN.Handler
             {
                 config.urlGFWList = Global.GFWLIST_URL;
             }
+            //if (Utils.IsNullOrEmpty(config.remoteDNS))
+            //{
+            //    config.remoteDNS = "1.1.1.1";
+            //}
 
             if (config.subItem == null)
             {
                 config.subItem = new List<SubItem>();
+            }
+            if (config.userPacRule == null)
+            {
+                config.userPacRule = new List<string>();
             }
 
             if (config == null
@@ -307,9 +312,9 @@ namespace v2rayN.Handler
         /// </summary>
         /// <param name="config"></param>
         /// <returns></returns>
-        public static int SaveConfig(ref Config config)
+        public static int SaveConfig(ref Config config, bool reload = true)
         {
-            Global.reloadV2ray = true;
+            Global.reloadV2ray = reload;
 
             ToJsonFile(config);
 
@@ -320,7 +325,7 @@ namespace v2rayN.Handler
         /// 存储文件
         /// </summary>
         /// <param name="config"></param>
-        public static void ToJsonFile(Config config)
+        private static void ToJsonFile(Config config)
         {
             Utils.ToJsonFile(config, Utils.GetPath(configRes));
         }

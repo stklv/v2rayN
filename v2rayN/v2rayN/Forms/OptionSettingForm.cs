@@ -22,6 +22,8 @@ namespace v2rayN.Forms
             InitKCP();
 
             InitGUI();
+
+            InitUserPAC();
         }
 
         /// <summary>
@@ -44,7 +46,7 @@ namespace v2rayN.Forms
                 chkudpEnabled.Checked = config.inbound[0].udpEnabled;
                 chksniffingEnabled.Checked = config.inbound[0].sniffingEnabled;
 
-                txtlocalPort2.Text = "socks + 1";
+                txtlocalPort2.Text = $"{config.inbound[0].localPort + 1}";
                 cmbprotocol2.Text = Global.InboundHttp;
 
                 if (config.inbound.Count > 1)
@@ -64,6 +66,8 @@ namespace v2rayN.Forms
 
             //remoteDNS
             txtremoteDNS.Text = config.remoteDNS;
+
+            cmblistenerType.SelectedIndex = config.listenerType;
         }
 
         /// <summary>
@@ -113,8 +117,6 @@ namespace v2rayN.Forms
             var enableStatistics = config.enableStatistics;
             chkEnableStatistics.Checked = enableStatistics;
 
-            tbCacheDays.Text = config.CacheDays.ToString();
-
 
             var cbSource = new ComboItem[]
             {
@@ -127,7 +129,7 @@ namespace v2rayN.Forms
             cbFreshrate.DisplayMember = "Text";
             cbFreshrate.ValueMember = "ID";
 
-            switch(config.statisticsFreshRate)
+            switch (config.statisticsFreshRate)
             {
                 case (int)Global.StatisticsFreshRate.quick:
                     cbFreshrate.SelectedItem = cbSource[0];
@@ -140,6 +142,11 @@ namespace v2rayN.Forms
                     break;
             }
 
+        }
+
+        private void InitUserPAC()
+        {
+            txtuserPacRule.Text = Utils.List2String(config.userPacRule, true);
         }
 
         private void btnOK_Click(object sender, EventArgs e)
@@ -160,6 +167,11 @@ namespace v2rayN.Forms
             }
 
             if (SaveGUI() != 0)
+            {
+                return;
+            }
+
+            if (SaveUserPAC() != 0)
             {
                 return;
             }
@@ -251,6 +263,7 @@ namespace v2rayN.Forms
             //remoteDNS
             config.remoteDNS = txtremoteDNS.Text.TrimEx();
 
+            config.listenerType = cmblistenerType.SelectedIndex;
             return 0;
         }
 
@@ -329,13 +342,6 @@ namespace v2rayN.Forms
 
             var lastEnableStatistics = config.enableStatistics;
             config.enableStatistics = chkEnableStatistics.Checked;
-
-            uint days = 0;
-            var valid = uint.TryParse(tbCacheDays.Text, out days);
-            if (!valid)
-                days = 7;
-            config.CacheDays = days;
-
             config.statisticsFreshRate = (int)cbFreshrate.SelectedValue;
 
             //if(lastEnableStatistics != config.enableStatistics)
@@ -350,6 +356,15 @@ namespace v2rayN.Forms
             return 0;
         }
 
+        private int SaveUserPAC()
+        {
+            string userPacRule = txtuserPacRule.Text.TrimEx();
+            userPacRule = userPacRule.Replace("\"", "");
+
+            config.userPacRule = Utils.String2List(userPacRule);
+
+            return 0;
+        }
         private void btnClose_Click(object sender, EventArgs e)
         {
             this.DialogResult = DialogResult.Cancel;
@@ -369,10 +384,15 @@ namespace v2rayN.Forms
 
         private void btnSetDefRountingRule_Click(object sender, EventArgs e)
         {
+            txtUseragent.Text = Utils.GetEmbedText(Global.CustomRoutingFileName + Global.agentTag);
+            txtUserdirect.Text = Utils.GetEmbedText(Global.CustomRoutingFileName + Global.directTag);
+            txtUserblock.Text = Utils.GetEmbedText(Global.CustomRoutingFileName + Global.blockTag);
+            cmbroutingMode.SelectedIndex = 3;
+
             var lstUrl = new List<string>();
-            lstUrl.Add(Global.CustomRoutingListUrl + "proxy");
-            lstUrl.Add(Global.CustomRoutingListUrl + "direct");
-            lstUrl.Add(Global.CustomRoutingListUrl + "block");
+            lstUrl.Add(Global.CustomRoutingListUrl + Global.agentTag);
+            lstUrl.Add(Global.CustomRoutingListUrl + Global.directTag);
+            lstUrl.Add(Global.CustomRoutingListUrl + Global.blockTag);
 
             var lstTxt = new List<TextBox>();
             lstTxt.Add(txtUseragent);
@@ -415,7 +435,13 @@ namespace v2rayN.Forms
 
     class ComboItem
     {
-        public int ID { get; set; }
-        public string Text { get; set; }
+        public int ID
+        {
+            get; set;
+        }
+        public string Text
+        {
+            get; set;
+        }
     }
 }

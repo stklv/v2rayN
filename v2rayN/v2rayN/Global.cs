@@ -5,19 +5,15 @@ namespace v2rayN
     {
         #region 常量
 
-        /// <summary>
-        /// 更新链接
-        /// </summary>
-        public const string UpdateUrl = @"https://github.com/2dust/v2rayN/releases";
-        /// <summary>
-        /// 关于链接
-        /// </summary>
+
         public const string AboutUrl = @"https://github.com/2dust/v2rayN";
+        public const string UpdateUrl = AboutUrl + @"/releases";
+
 
         /// <summary>
         /// SpeedTestUrl
         /// </summary>
-        public const string SpeedTestUrl = @"http://speedtest-sfo2.digitalocean.com/10mb.test";
+        public const string SpeedTestUrl = @"http://speedtest-sgp1.digitalocean.com/10mb.test";
         public const string SpeedPingTestUrl = @"https://www.google.com/generate_204";
 
         /// <summary>
@@ -30,7 +26,7 @@ namespace v2rayN
         /// <summary>
         /// PromotionUrl
         /// </summary>
-        public const string PromotionUrl = @"https://1.2345345.xyz/ads.html";
+        public const string PromotionUrl = @"aHR0cHM6Ly8xLjIzNDQ1Ni54eXovYWJjLmh0bWw=";
 
         /// <summary>
         /// 本软件配置文件名
@@ -62,6 +58,8 @@ namespace v2rayN
         /// 空白的pac文件
         /// </summary>
         public const string BlankPacFileName = "v2rayN.Sample.BlankPac.txt";
+
+        public const string CustomRoutingFileName = "v2rayN.Sample.custom_routing_";
 
 
         /// <summary>
@@ -98,7 +96,7 @@ namespace v2rayN
         /// 阻止 tag值
         /// </summary>
         public const string blockTag = "block";
-        
+
         /// <summary>
         /// 
         /// </summary>
@@ -162,8 +160,9 @@ namespace v2rayN
             medium = 2000,
             slow = 3000
         }
-        public const string StatisticLogDirectory = "Statistics";
-        public const string StatisticLogOverall = "overall.txt";
+        public const string StatisticLogOverall = "StatisticLogOverall.json";
+
+        public const string IEProxyExceptions = "localhost;127.*;10.*;172.16.*;172.17.*;172.18.*;172.19.*;172.20.*;172.21.*;172.22.*;172.23.*;172.24.*;172.25.*;172.26.*;172.27.*;172.28.*;172.29.*;172.30.*;172.31.*;192.168.*";
 
         #endregion
 
@@ -172,32 +171,55 @@ namespace v2rayN
         /// <summary>
         /// 是否需要重启服务V2ray
         /// </summary>
-        public static bool reloadV2ray { get; set; }
+        public static bool reloadV2ray
+        {
+            get; set;
+        }
 
         /// <summary>
         /// 是否开启全局代理(http)
         /// </summary>
-        public static bool sysAgent { get; set; }
+        public static bool sysAgent
+        {
+            get; set;
+        }
 
         /// <summary>
         /// socks端口
         /// </summary>
-        public static int socksPort { get; set; }
+        public static int socksPort
+        {
+            get; set;
+        }
 
         /// <summary>
         /// http端口
         /// </summary>
-        public static int httpPort { get; set; }
+        public static int httpPort
+        {
+            get; set;
+        }
 
         /// <summary>
         /// PAC端口
         /// </summary>
-        public static int pacPort { get; set; }
+        public static int pacPort
+        {
+            get; set;
+        }
 
         /// <summary>
         ///  
         /// </summary>
-        public static int statePort { get; set; }
+        public static int statePort
+        {
+            get; set;
+        }
+
+        public static Job processJob
+        {
+            get; set;
+        }
 
         #endregion
 

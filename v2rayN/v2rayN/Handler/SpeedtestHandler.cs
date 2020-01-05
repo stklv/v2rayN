@@ -1,5 +1,4 @@
-﻿using Grpc.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
@@ -69,7 +68,7 @@ namespace v2rayN.Handler
             }
         }
 
-        public void RunPing()
+        private void RunPing()
         {
             try
             {
@@ -100,7 +99,7 @@ namespace v2rayN.Handler
             }
         }
 
-        public void RunTcping()
+        private void RunTcping()
         {
             try
             {
@@ -131,7 +130,7 @@ namespace v2rayN.Handler
             }
         }
 
-        public void RunRealPing()
+        private void RunRealPing()
         {
             try
             {
@@ -182,6 +181,7 @@ namespace v2rayN.Handler
                 Utils.SaveLog(ex.Message, ex);
             }
         }
+
 
         private void RunSpeedTest()
         {
@@ -245,7 +245,7 @@ namespace v2rayN.Handler
 
             testCounter++;
             var webProxy = new WebProxy(Global.Loopback, httpPort + index);
-            downloadHandle2.DownloadFileAsync(_config, url, webProxy);
+            downloadHandle2.DownloadFileAsync(_config, url, webProxy, 20);
 
             return 0;
         }
@@ -308,7 +308,5 @@ namespace v2rayN.Handler
             return msg;
 
         }
-
-
     }
 }
