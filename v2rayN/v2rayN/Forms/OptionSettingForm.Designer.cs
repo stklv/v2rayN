@@ -65,10 +65,10 @@
             this.tabPage8 = new System.Windows.Forms.TabPage();
             this.cmbroutingMode = new System.Windows.Forms.ComboBox();
             this.panel3 = new System.Windows.Forms.Panel();
+            this.linkLabelRoutingDoc = new System.Windows.Forms.LinkLabel();
             this.btnSetDefRountingRule = new System.Windows.Forms.Button();
             this.labRoutingTips = new System.Windows.Forms.Label();
             this.cmbdomainStrategy = new System.Windows.Forms.ComboBox();
-            this.label15 = new System.Windows.Forms.Label();
             this.tabPage6 = new System.Windows.Forms.TabPage();
             this.chkKcpcongestion = new System.Windows.Forms.CheckBox();
             this.txtKcpwriteBufferSize = new System.Windows.Forms.TextBox();
@@ -84,6 +84,7 @@
             this.txtKcpmtu = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.tabPage7 = new System.Windows.Forms.TabPage();
+            this.chkKeepOlderDedupl = new System.Windows.Forms.CheckBox();
             this.cbFreshrate = new System.Windows.Forms.ComboBox();
             this.lbFreshrate = new System.Windows.Forms.Label();
             this.chkEnableStatistics = new System.Windows.Forms.CheckBox();
@@ -182,7 +183,9 @@
             resources.GetString("cmblistenerType.Items1"),
             resources.GetString("cmblistenerType.Items2"),
             resources.GetString("cmblistenerType.Items3"),
-            resources.GetString("cmblistenerType.Items4")});
+            resources.GetString("cmblistenerType.Items4"),
+            resources.GetString("cmblistenerType.Items5"),
+            resources.GetString("cmblistenerType.Items6")});
             resources.ApplyResources(this.cmblistenerType, "cmblistenerType");
             this.cmblistenerType.Name = "cmblistenerType";
             // 
@@ -384,12 +387,19 @@
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.linkLabelRoutingDoc);
             this.panel3.Controls.Add(this.btnSetDefRountingRule);
             this.panel3.Controls.Add(this.labRoutingTips);
             this.panel3.Controls.Add(this.cmbdomainStrategy);
-            this.panel3.Controls.Add(this.label15);
             resources.ApplyResources(this.panel3, "panel3");
             this.panel3.Name = "panel3";
+            // 
+            // linkLabelRoutingDoc
+            // 
+            resources.ApplyResources(this.linkLabelRoutingDoc, "linkLabelRoutingDoc");
+            this.linkLabelRoutingDoc.Name = "linkLabelRoutingDoc";
+            this.linkLabelRoutingDoc.TabStop = true;
+            this.linkLabelRoutingDoc.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelRoutingDoc_LinkClicked);
             // 
             // btnSetDefRountingRule
             // 
@@ -414,11 +424,6 @@
             resources.GetString("cmbdomainStrategy.Items2")});
             resources.ApplyResources(this.cmbdomainStrategy, "cmbdomainStrategy");
             this.cmbdomainStrategy.Name = "cmbdomainStrategy";
-            // 
-            // label15
-            // 
-            resources.ApplyResources(this.label15, "label15");
-            this.label15.Name = "label15";
             // 
             // tabPage6
             // 
@@ -507,6 +512,7 @@
             // 
             // tabPage7
             // 
+            this.tabPage7.Controls.Add(this.chkKeepOlderDedupl);
             this.tabPage7.Controls.Add(this.cbFreshrate);
             this.tabPage7.Controls.Add(this.lbFreshrate);
             this.tabPage7.Controls.Add(this.chkEnableStatistics);
@@ -517,6 +523,12 @@
             resources.ApplyResources(this.tabPage7, "tabPage7");
             this.tabPage7.Name = "tabPage7";
             this.tabPage7.UseVisualStyleBackColor = true;
+            // 
+            // chkKeepOlderDedupl
+            // 
+            resources.ApplyResources(this.chkKeepOlderDedupl, "chkKeepOlderDedupl");
+            this.chkKeepOlderDedupl.Name = "chkKeepOlderDedupl";
+            this.chkKeepOlderDedupl.UseVisualStyleBackColor = true;
             // 
             // cbFreshrate
             // 
@@ -697,7 +709,6 @@
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.ComboBox cmbdomainStrategy;
-        private System.Windows.Forms.Label label15;
         private System.Windows.Forms.ComboBox cmbroutingMode;
         private System.Windows.Forms.CheckBox chksniffingEnabled;
         private System.Windows.Forms.CheckBox chksniffingEnabled2;
@@ -712,5 +723,7 @@
         private System.Windows.Forms.TextBox txtuserPacRule;
         private System.Windows.Forms.Panel panel4;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.CheckBox chkKeepOlderDedupl;
+        private System.Windows.Forms.LinkLabel linkLabelRoutingDoc;
     }
 }
