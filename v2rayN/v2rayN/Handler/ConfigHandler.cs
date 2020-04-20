@@ -119,6 +119,11 @@ namespace v2rayN.Handler
             {
                 config.uiItem = new UIItem();
             }
+            if (config.uiItem.mainLvColWidth == null)
+            {
+                config.uiItem.mainLvColWidth = new Dictionary<string, int>();
+            }
+
             //// 如果是用户升级，首次会有端口号为0的情况，不可用，这里处理
             //if (config.pacPort == 0)
             //{
@@ -140,6 +145,10 @@ namespace v2rayN.Handler
             //{
             //    config.remoteDNS = "1.1.1.1";
             //}
+            if (Utils.IsNullOrEmpty(config.defaultAllowInsecure))
+            {
+                config.defaultAllowInsecure = "false";
+            }
 
             if (config.subItem == null)
             {
@@ -206,6 +215,10 @@ namespace v2rayN.Handler
             else
             {
                 //添加
+                if (Utils.IsNullOrEmpty(vmessItem.allowInsecure))
+                {
+                    vmessItem.allowInsecure = config.defaultAllowInsecure;
+                }
                 config.vmess.Add(vmessItem);
                 if (config.vmess.Count == 1)
                 {
@@ -276,18 +289,19 @@ namespace v2rayN.Handler
             VmessItem vmessItem = new VmessItem
             {
                 configVersion = config.vmess[index].configVersion,
-                configType = config.vmess[index].configType,
                 address = config.vmess[index].address,
                 port = config.vmess[index].port,
                 id = config.vmess[index].id,
                 alterId = config.vmess[index].alterId,
                 security = config.vmess[index].security,
                 network = config.vmess[index].network,
+                remarks = string.Format("{0}-clone", config.vmess[index].remarks),
                 headerType = config.vmess[index].headerType,
                 requestHost = config.vmess[index].requestHost,
                 path = config.vmess[index].path,
                 streamSecurity = config.vmess[index].streamSecurity,
-                remarks = string.Format("{0}-clone", config.vmess[index].remarks)
+                allowInsecure = config.vmess[index].allowInsecure,
+                configType = config.vmess[index].configType
             };
 
             config.vmess.Insert(index + 1, vmessItem); // 插入到下一项
@@ -875,5 +889,38 @@ namespace v2rayN.Handler
             ToJsonFile(config);
             return 0;
         }
+
+        public static int AddformMainLvColWidth(ref Config config, string name, int width)
+        {
+            if (config.uiItem.mainLvColWidth == null)
+            {
+                config.uiItem.mainLvColWidth = new Dictionary<string, int>();
+            }
+            if (config.uiItem.mainLvColWidth.ContainsKey(name))
+            {
+                config.uiItem.mainLvColWidth[name] = width;
+            }
+            else
+            {
+                config.uiItem.mainLvColWidth.Add(name, width);
+            }
+            return 0;
+        }
+        public static int GetformMainLvColWidth(ref Config config, string name, int width)
+        {
+            if (config.uiItem.mainLvColWidth == null)
+            {
+                config.uiItem.mainLvColWidth = new Dictionary<string, int>();
+            }
+            if (config.uiItem.mainLvColWidth.ContainsKey(name))
+            {
+                return config.uiItem.mainLvColWidth[name];
+            }
+            else
+            {
+                return width;
+            }
+        }
+
     }
 }
