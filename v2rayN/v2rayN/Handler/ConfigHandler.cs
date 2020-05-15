@@ -4,6 +4,8 @@ using System.IO;
 using System.Net;
 using v2rayN.Mode;
 using v2rayN.Base;
+using System.Linq;
+using v2rayN.Tool;
 
 namespace v2rayN.Handler
 {
@@ -145,10 +147,6 @@ namespace v2rayN.Handler
             //{
             //    config.remoteDNS = "1.1.1.1";
             //}
-            if (Utils.IsNullOrEmpty(config.defaultAllowInsecure))
-            {
-                config.defaultAllowInsecure = "false";
-            }
 
             if (config.subItem == null)
             {
@@ -217,7 +215,7 @@ namespace v2rayN.Handler
                 //添加
                 if (Utils.IsNullOrEmpty(vmessItem.allowInsecure))
                 {
-                    vmessItem.allowInsecure = config.defaultAllowInsecure;
+                    vmessItem.allowInsecure = config.defAllowInsecure.ToString();
                 }
                 config.vmess.Add(vmessItem);
                 if (config.vmess.Count == 1)
@@ -922,5 +920,45 @@ namespace v2rayN.Handler
             }
         }
 
+        public static int SortServers(ref Config config, EServerColName name, bool asc)
+        {
+            if (config.vmess.Count <= 0)
+            {
+                return -1;
+            }
+            switch (name)
+            {
+                case EServerColName.configType:
+                case EServerColName.remarks:
+                case EServerColName.address:
+                case EServerColName.port:
+                case EServerColName.security:
+                case EServerColName.network:
+                case EServerColName.testResult:
+                    break;
+                default:
+                    return -1;
+            }
+            string itemId = config.getItemId();
+            var items = config.vmess.AsQueryable();
+
+            if (asc)
+            {
+                config.vmess = items.OrderBy(name.ToString()).ToList();
+            }
+            else
+            {
+                config.vmess = items.OrderByDescending(name.ToString()).ToList();
+            }
+
+            var index_ = config.vmess.FindIndex(it => it.getItemId() == itemId);
+            if (index_ >= 0)
+            {
+                config.index = index_;
+            }
+
+            ToJsonFile(config);
+            return 0;
+        }
     }
 }

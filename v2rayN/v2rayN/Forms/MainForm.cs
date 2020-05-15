@@ -178,7 +178,7 @@ namespace v2rayN.Forms
             lvServers.View = View.Details;
             lvServers.Scrollable = true;
             lvServers.MultiSelect = true;
-            lvServers.HeaderStyle = ColumnHeaderStyle.Nonclickable;
+            lvServers.HeaderStyle = ColumnHeaderStyle.Clickable;
 
             lvServers.Columns.Add("", 30);
             lvServers.Columns.Add(UIRes.I18N("LvServiceType"), 80);
@@ -239,7 +239,7 @@ namespace v2rayN.Forms
                     }
                 }
                 ListViewItem lvItem = new ListViewItem(def);
-                _addSubItem(lvItem, EServerColName.type.ToString(), ((EConfigType)item.configType).ToString());
+                _addSubItem(lvItem, EServerColName.configType.ToString(), ((EConfigType)item.configType).ToString());
                 _addSubItem(lvItem, EServerColName.remarks.ToString(), item.remarks);
                 _addSubItem(lvItem, EServerColName.address.ToString(), item.address);
                 _addSubItem(lvItem, EServerColName.port.ToString(), item.port.ToString());
@@ -377,6 +377,35 @@ namespace v2rayN.Forms
             }
         }
 
+        private void lvServers_ColumnClick(object sender, ColumnClickEventArgs e)
+        {
+            if (e.Column < 0)
+            {
+                return;
+            }
+
+            try
+            {
+                var tag = lvServers.Columns[e.Column].Tag?.ToString();
+                bool asc = Utils.IsNullOrEmpty(tag) ? true : !Convert.ToBoolean(tag);
+                if (ConfigHandler.SortServers(ref config, (EServerColName)e.Column, asc) != 0)
+                {
+                    return;
+                }
+                lvServers.Columns[e.Column].Tag = Convert.ToString(asc);
+                RefreshServers();
+            }
+            catch (Exception ex)
+            {
+                Utils.SaveLog(ex.Message, ex);
+            }
+
+            if (e.Column < 0)
+            {
+                return;
+            }
+            
+        }
         #endregion
 
         #region v2ray 操作
@@ -1228,11 +1257,11 @@ namespace v2rayN.Forms
                 {
                     int httpPort = config.GetLocalPort(Global.InboundHttp);
                     WebProxy webProxy = new WebProxy(Global.Loopback, httpPort);
-                    downloadHandle.DownloadFileAsync(url, webProxy, 60);
+                    downloadHandle.DownloadFileAsync(url, webProxy, 600);
                 }
                 else
                 {
-                    downloadHandle.DownloadFileAsync(url, null, 60);
+                    downloadHandle.DownloadFileAsync(url, null, 600);
                 }
             }
         }
@@ -1563,8 +1592,8 @@ namespace v2rayN.Forms
         }
 
 
-        #endregion
 
+        #endregion
 
     }
 }
