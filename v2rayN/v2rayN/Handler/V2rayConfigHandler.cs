@@ -551,6 +551,10 @@ namespace v2rayN.Handler
                         {
                             type = config.headerType()
                         };
+                        if (!Utils.IsNullOrEmpty(config.path()))
+                        {
+                            kcpSettings.seed = config.path();
+                        }
                         streamSettings.kcpSettings = kcpSettings;
                         break;
                     //ws
