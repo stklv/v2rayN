@@ -169,7 +169,11 @@ namespace v2rayN.Mode
         {
             get; set;
         }
-      
+        public bool enableRoutingAdvanced
+        {
+            get; set;
+        }
+
         public ECoreType coreType
         {
             get; set;
@@ -341,6 +345,14 @@ namespace v2rayN.Mode
                 return string.Empty;
             }
             return vmess[index].flow.TrimEx();
+        }
+        public string sni()
+        {
+            if (index < 0)
+            {
+                return string.Empty;
+            }
+            return vmess[index].sni.TrimEx();
         }
         #endregion
 
@@ -565,6 +577,13 @@ namespace v2rayN.Mode
         /// VLESS flow
         /// </summary>
         public string flow
+        {
+            get; set;
+        }
+        /// <summary>
+        /// tls sni
+        /// </summary>
+        public string sni
         {
             get; set;
         }

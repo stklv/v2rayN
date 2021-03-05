@@ -1272,7 +1272,7 @@ namespace v2rayN.Forms
                 {
                     if (args.Success)
                     {
-                        AppendText(false, string.Format(UIRes.I18N("MsgParsingSuccessfully"), "v2rayCore"));
+                        AppendText(false, string.Format(UIRes.I18N("MsgParsingSuccessfully"), "Core"));
 
                         string url = args.Msg;
                         this.Invoke((MethodInvoker)(delegate
@@ -1323,7 +1323,7 @@ namespace v2rayN.Forms
                 };
             }
 
-            AppendText(false, string.Format(UIRes.I18N("MsgStartUpdating"), "v2rayCore"));
+            AppendText(false, string.Format(UIRes.I18N("MsgStartUpdating"), "Core"));
             downloadHandle.CheckUpdateAsync(type);
         }
         #endregion
@@ -1398,69 +1398,15 @@ namespace v2rayN.Forms
         /// </summary>
         private void UpdateSubscriptionProcess()
         {
-            AppendText(false, UIRes.I18N("MsgUpdateSubscriptionStart"));
-
-            if (config.subItem == null || config.subItem.Count <= 0)
+            void _updateUI(bool refresh, string msg)
             {
-                AppendText(false, UIRes.I18N("MsgNoValidSubscription"));
-                return;
-            }
-
-            for (int k = 1; k <= config.subItem.Count; k++)
-            {
-                string id = config.subItem[k - 1].id.TrimEx();
-                string url = config.subItem[k - 1].url.TrimEx();
-                string hashCode = $"{k}->";
-                if (config.subItem[k - 1].enabled == false)
+                AppendText(false, msg);
+                if (refresh)
                 {
-                    continue;
+                    RefreshServers();
                 }
-                if (Utils.IsNullOrEmpty(id) || Utils.IsNullOrEmpty(url))
-                {
-                    AppendText(false, $"{hashCode}{UIRes.I18N("MsgNoValidSubscription")}");
-                    continue;
-                }
-
-                DownloadHandle downloadHandle3 = new DownloadHandle();
-                downloadHandle3.UpdateCompleted += (sender2, args) =>
-                {
-                    if (args.Success)
-                    {
-                        AppendText(false, $"{hashCode}{UIRes.I18N("MsgGetSubscriptionSuccessfully")}");
-                        string result = Utils.Base64Decode(args.Msg);
-                        if (Utils.IsNullOrEmpty(result))
-                        {
-                            AppendText(false, $"{hashCode}{UIRes.I18N("MsgSubscriptionDecodingFailed")}");
-                            return;
-                        }
-
-                        ConfigHandler.RemoveServerViaSubid(ref config, id);
-                        AppendText(false, $"{hashCode}{UIRes.I18N("MsgClearSubscription")}");
-                        RefreshServers();
-                        int ret = MainFormHandler.Instance.AddBatchServers(config, result, id);
-                        if (ret > 0)
-                        {
-                            RefreshServers();
-                        }
-                        else
-                        {
-                            AppendText(false, $"{hashCode}{UIRes.I18N("MsgFailedImportSubscription")}");
-                        }
-                        AppendText(false, $"{hashCode}{UIRes.I18N("MsgUpdateSubscriptionEnd")}");
-                    }
-                    else
-                    {
-                        AppendText(false, args.Msg);
-                    }
-                };
-                downloadHandle3.Error += (sender2, args) =>
-                {
-                    AppendText(true, args.GetException().Message);
-                };
-
-                downloadHandle3.WebDownloadString(url);
-                AppendText(false, $"{hashCode}{UIRes.I18N("MsgStartGettingSubscriptions")}");
-            }
+            };
+            MainFormHandler.Instance.UpdateSubscriptionProcess(config, _updateUI);            
         }
 
         private void tsbQRCodeSwitch_CheckedChanged(object sender, EventArgs e)
@@ -1501,12 +1447,22 @@ namespace v2rayN.Forms
         /// </summary>
         private void RefreshRoutingsMenu()
         {
+            menuRoutings.Visible = config.enableRoutingAdvanced;
+            if (!config.enableRoutingAdvanced)
+            {
+                return;
+            }
+
             menuRoutings.DropDownItems.Clear();
 
             List<ToolStripMenuItem> lst = new List<ToolStripMenuItem>();
             for (int k = 0; k < config.routings.Count; k++)
             {
                 var item = config.routings[k];
+                if (item.locked == true)
+                {
+                    continue;
+                }
                 string name = item.remarks;
 
                 ToolStripMenuItem ts = new ToolStripMenuItem(name)
@@ -1540,6 +1496,53 @@ namespace v2rayN.Forms
             {
             }
         }
+        #endregion
+
+        #region MsgBoxMenu
+        private void menuMsgBoxSelectAll_Click(object sender, EventArgs e)
+        {
+            this.txtMsgBox.Focus();
+            this.txtMsgBox.SelectAll();
+        }
+
+        private void menuMsgBoxCopy_Click(object sender, EventArgs e)
+        {
+            var data = this.txtMsgBox.SelectedText.TrimEx();
+            Utils.SetClipboardData(data);
+        }
+
+        private void menuMsgBoxCopyAll_Click(object sender, EventArgs e)
+        {
+            var data = this.txtMsgBox.Text;
+            Utils.SetClipboardData(data);
+        }
+        private void menuMsgBoxAddRoutingRule_Click(object sender, EventArgs e)
+        {
+            menuMsgBoxCopy_Click(null, null);
+            tsbRoutingSetting_Click(null, null);
+        }
+
+        private void txtMsgBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Control)
+            {
+                switch (e.KeyCode)
+                {
+                    case Keys.A:
+                        menuMsgBoxSelectAll_Click(null, null);
+                        break;
+                    case Keys.C:
+                        menuMsgBoxCopy_Click(null, null);
+                        break;
+                    case Keys.V:
+                        menuMsgBoxAddRoutingRule_Click(null, null);
+                        break;
+
+                }
+            }
+
+        }
+
         #endregion
 
     }
