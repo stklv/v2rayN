@@ -40,6 +40,7 @@ namespace v2rayN.Handler
                         port = item.port.ToString(),
                         id = item.id,
                         aid = item.alterId.ToString(),
+                        scy = item.security,
                         net = item.network,
                         type = item.headerType,
                         host = item.requestHost,
@@ -209,6 +210,16 @@ namespace v2rayN.Handler
                             dicQuery.Add("quicSecurity", Utils.UrlEncode(item.requestHost));
                             dicQuery.Add("key", Utils.UrlEncode(item.path));
                             break;
+                        case "grpc":
+                            if (!Utils.IsNullOrEmpty(item.path))
+                            {
+                                dicQuery.Add("serviceName", Utils.UrlEncode(item.path));
+                                if (item.headerType == Global.GrpcgunMode || item.headerType == Global.GrpcmultiMode)
+                                {
+                                    dicQuery.Add("mode", Utils.UrlEncode(item.headerType));
+                                }
+                            }
+                            break;
                     }
                     string query = "?" + string.Join("&", dicQuery.Select(x => x.Key + "=" + x.Value).ToArray());
 
@@ -279,10 +290,9 @@ namespace v2rayN.Handler
                             msg = UIRes.I18N("FailedConversionConfiguration");
                             return null;
                         }
-                        vmessItem.security = Global.DefaultSecurity;
+
                         vmessItem.network = Global.DefaultNetwork;
                         vmessItem.headerType = Global.None;
-
 
                         vmessItem.configVersion = Utils.ToInt(vmessQRCode.v);
                         vmessItem.remarks = Utils.ToString(vmessQRCode.ps);
@@ -290,7 +300,16 @@ namespace v2rayN.Handler
                         vmessItem.port = Utils.ToInt(vmessQRCode.port);
                         vmessItem.id = Utils.ToString(vmessQRCode.id);
                         vmessItem.alterId = Utils.ToInt(vmessQRCode.aid);
+                        vmessItem.security = Utils.ToString(vmessQRCode.scy);
 
+                        if (!Utils.IsNullOrEmpty(vmessQRCode.scy))
+                        {
+                            vmessItem.security = vmessQRCode.scy;
+                        }
+                        else
+                        {
+                            vmessItem.security = Global.DefaultSecurity;
+                        }
                         if (!Utils.IsNullOrEmpty(vmessQRCode.net))
                         {
                             vmessItem.network = vmessQRCode.net;
@@ -681,7 +700,10 @@ namespace v2rayN.Handler
                     item.requestHost = query["quicSecurity"] ?? "none";
                     item.path = Utils.UrlDecode(query["key"] ?? "");
                     break;
-
+                case "grpc":
+                    item.path = Utils.UrlDecode(query["serviceName"] ?? "");
+                    item.headerType= Utils.UrlDecode(query["mode"] ?? Global.GrpcgunMode);
+                    break;
                 default:
                     return null;
             }

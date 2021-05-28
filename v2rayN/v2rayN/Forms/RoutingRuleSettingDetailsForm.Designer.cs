@@ -31,6 +31,8 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RoutingRuleSettingDetailsForm));
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel3 = new System.Windows.Forms.Panel();
+            this.clbInboundTag = new System.Windows.Forms.CheckedListBox();
+            this.label2 = new System.Windows.Forms.Label();
             this.clbProtocol = new System.Windows.Forms.CheckedListBox();
             this.label3 = new System.Windows.Forms.Label();
             this.txtPort = new System.Windows.Forms.TextBox();
@@ -60,7 +62,8 @@
             // 
             // panel3
             // 
-            resources.ApplyResources(this.panel3, "panel3");
+            this.panel3.Controls.Add(this.clbInboundTag);
+            this.panel3.Controls.Add(this.label2);
             this.panel3.Controls.Add(this.clbProtocol);
             this.panel3.Controls.Add(this.label3);
             this.panel3.Controls.Add(this.txtPort);
@@ -68,12 +71,29 @@
             this.panel3.Controls.Add(this.labRoutingTips);
             this.panel3.Controls.Add(this.label4);
             this.panel3.Controls.Add(this.cmbOutboundTag);
+            resources.ApplyResources(this.panel3, "panel3");
             this.panel3.Name = "panel3";
+            // 
+            // clbInboundTag
+            // 
+            this.clbInboundTag.CheckOnClick = true;
+            resources.ApplyResources(this.clbInboundTag, "clbInboundTag");
+            this.clbInboundTag.FormattingEnabled = true;
+            this.clbInboundTag.Items.AddRange(new object[] {
+            resources.GetString("clbInboundTag.Items"),
+            resources.GetString("clbInboundTag.Items1")});
+            this.clbInboundTag.MultiColumn = true;
+            this.clbInboundTag.Name = "clbInboundTag";
+            // 
+            // label2
+            // 
+            resources.ApplyResources(this.label2, "label2");
+            this.label2.Name = "label2";
             // 
             // clbProtocol
             // 
-            resources.ApplyResources(this.clbProtocol, "clbProtocol");
             this.clbProtocol.CheckOnClick = true;
+            resources.ApplyResources(this.clbProtocol, "clbProtocol");
             this.clbProtocol.FormattingEnabled = true;
             this.clbProtocol.Items.AddRange(new object[] {
             resources.GetString("clbProtocol.Items"),
@@ -99,8 +119,8 @@
             // 
             // labRoutingTips
             // 
-            resources.ApplyResources(this.labRoutingTips, "labRoutingTips");
             this.labRoutingTips.ForeColor = System.Drawing.Color.Brown;
+            resources.ApplyResources(this.labRoutingTips, "labRoutingTips");
             this.labRoutingTips.Name = "labRoutingTips";
             // 
             // label4
@@ -110,26 +130,26 @@
             // 
             // cmbOutboundTag
             // 
-            resources.ApplyResources(this.cmbOutboundTag, "cmbOutboundTag");
             this.cmbOutboundTag.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbOutboundTag.FormattingEnabled = true;
             this.cmbOutboundTag.Items.AddRange(new object[] {
             resources.GetString("cmbOutboundTag.Items"),
             resources.GetString("cmbOutboundTag.Items1"),
             resources.GetString("cmbOutboundTag.Items2")});
+            resources.ApplyResources(this.cmbOutboundTag, "cmbOutboundTag");
             this.cmbOutboundTag.Name = "cmbOutboundTag";
             // 
             // panel4
             // 
-            resources.ApplyResources(this.panel4, "panel4");
             this.panel4.Controls.Add(this.btnClose);
             this.panel4.Controls.Add(this.btnOK);
+            resources.ApplyResources(this.panel4, "panel4");
             this.panel4.Name = "panel4";
             // 
             // btnClose
             // 
-            resources.ApplyResources(this.btnClose, "btnClose");
             this.btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            resources.ApplyResources(this.btnClose, "btnClose");
             this.btnClose.Name = "btnClose";
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
@@ -143,15 +163,15 @@
             // 
             // panel2
             // 
-            resources.ApplyResources(this.panel2, "panel2");
             this.panel2.Controls.Add(this.groupBox2);
             this.panel2.Controls.Add(this.groupBox1);
+            resources.ApplyResources(this.panel2, "panel2");
             this.panel2.Name = "panel2";
             // 
             // groupBox2
             // 
-            resources.ApplyResources(this.groupBox2, "groupBox2");
             this.groupBox2.Controls.Add(this.txtIP);
+            resources.ApplyResources(this.groupBox2, "groupBox2");
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.TabStop = false;
             // 
@@ -162,8 +182,8 @@
             // 
             // groupBox1
             // 
-            resources.ApplyResources(this.groupBox1, "groupBox1");
             this.groupBox1.Controls.Add(this.txtDomain);
+            resources.ApplyResources(this.groupBox1, "groupBox1");
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.TabStop = false;
             // 
@@ -214,5 +234,7 @@
         private System.Windows.Forms.TextBox txtPort;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.CheckedListBox clbProtocol;
+        private System.Windows.Forms.CheckedListBox clbInboundTag;
+        private System.Windows.Forms.Label label2;
     }
 }

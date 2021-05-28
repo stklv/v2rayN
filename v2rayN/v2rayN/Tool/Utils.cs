@@ -618,13 +618,13 @@ namespace v2rayN
             return def;
         }
 
-        public static void RegWriteValue(string path, string name, string value)
+        public static void RegWriteValue(string path, string name, object value)
         {
             RegistryKey regKey = null;
             try
             {
                 regKey = Registry.CurrentUser.CreateSubKey(path);
-                if (IsNullOrEmpty(value))
+                if (IsNullOrEmpty(value.ToString()))
                 {
                     regKey?.DeleteValue(name, false);
                 }
@@ -766,9 +766,9 @@ namespace v2rayN
             try
             {
                 IDataObject data = Clipboard.GetDataObject();
-                if (data.GetDataPresent(DataFormats.Text))
+                if (data.GetDataPresent(DataFormats.UnicodeText))
                 {
-                    strData = data.GetData(DataFormats.Text).ToString();
+                    strData = data.GetData(DataFormats.UnicodeText).ToString();
                 }
                 return strData;
             }
